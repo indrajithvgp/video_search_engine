@@ -1,33 +1,24 @@
 import React, { useState, useEffect} from 'react';
 import SearchBar from './components/SearchBar'
-import youtube from '../src/api/youtube'
+// import youtube from '../src/api/youtube'
 import VideoList from './components/VideoList'
 import VideoDetail from './components/VideoDetail'
+import useVideos from './hooks/useVideos'
 
 
 const App= ()=>{
 
-  const[videos, setVideos] = useState([])
   const[selectedVideo, setSelectedVideo] = useState(null)
+  const [videos, search] = useVideos('spotify clone')
 
   useEffect(()=>{
-    onTermSubmit('spotify clone')
-  },[])
+    setSelectedVideo(videos[0])
+  },[videos])
 
-  const onTermSubmit=async(term) => {
-    const response = await youtube('./search',{
-        params:{
-            q:term
-        } 
-    })
-    setVideos(response.data.items)
-    setSelectedVideo(response.data.items[0])
-  }
-
-
+  
   return(
     <div className='ui container'>
-        <SearchBar onFormSubmit={onTermSubmit}/>
+        <SearchBar onFormSubmit={search}/>
         <div className='ui grid'>
             <div className='ui row'>
                 <div className='eleven wide column'>
