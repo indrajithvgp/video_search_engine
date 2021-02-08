@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect} from 'react';
+import SearchBar from './components/SearchBar'
+import youtube from '../src/api/youtube'
+import VideoList from './components/VideoList'
+import VideoDetail from './components/VideoDetail'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+const App= ()=>{
+
+  const[videos, setVideos] = useState([])
+  const[selectedVideo, setSelectedVideo] = useState(null)
+
+  useEffect(()=>{
+    onTermSubmit('spotify clone')
+  },[])
+
+  const onTermSubmit=async(term) => {
+    const response = await youtube('./search',{
+        params:{
+            q:term
+        } 
+    })
+    setVideos(response.data.items)
+    setSelectedVideo(response.data.items[0])
+  }
+
+
+  return(
+    <div className='ui container'>
+        <SearchBar onFormSubmit={onTermSubmit}/>
+        <div className='ui grid'>
+            <div className='ui row'>
+                <div className='eleven wide column'>
+                    <VideoDetail video={selectedVideo}/>
+                </div>
+                <div className='five wide column'>
+                    <VideoList onVideoSelect={(video)=>setSelectedVideo(video)} videos={videos}/>
+                </div>
+            </div>
+        </div>
     </div>
-  );
+  )
 }
 
 export default App;
